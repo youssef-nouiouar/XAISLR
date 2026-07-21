@@ -1,0 +1,10 @@
+# CNN — primary. Inherits configs/_recipe.yaml and configs/data.yaml.
+inherit: [_recipe.yaml, data.yaml]
+
+model:
+  family: cnn
+  name: convnext_tiny        # timm id
+  pretrained: true           # ImageNet-1k
+  num_classes: 32
+  # Grad-CAM target layer for native (secondary) explanations:
+  cam_target_layer: stages.3.blocks.2.norm

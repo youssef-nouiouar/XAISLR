@@ -1,0 +1,54 @@
+# Data pipeline configuration (Phase 1)
+# Dataset: Arabic Sign Language "Mosl_alphabet" (32 classes), run on Kaggle.
+# Input is read-only under /kaggle/input; all outputs go to a writable dir.
+
+dataset:
+  name: arsl_mosl_alphabet
+  num_classes: 32
+  classes: [ain, al, aleff, bb, dal, dha, dhad, fa, gaaf, ghain, ha, haa,
+            jeem, kaaf, khaa, la, laam, meem, nun, ra, saad, seen, sheen,
+            ta, taa, thaa, thal, toot, waw, ya, yaa, zay]
+  # Read-only Kaggle mount. Each class is a subfolder of images.
+  train_root: /kaggle/input/datasets/youssefnouiouar1/SLR/Mosl_alphabet
+  # No separate real-world OOD test set for this dataset (Phase 1 = split only).
+  ood_root: null
+
+# All relative output paths below are resolved against output_dir.
+# On Kaggle only /kaggle/working is writable; /kaggle/input is read-only.
+output_dir: /kaggle/working/xaislr
+
+# Near-duplicate detection (leakage control) — see CLAUDE.md constraint #1.
+dedup:
+  method: phash            # phash | embedding (only phash implemented)
+  hash_size: 16            # phash grid -> 16*16 = 256-bit hash
+  hamming_threshold: 6     # <= threshold bits differing => same duplicate cluster
+  num_bands: null          # null => auto = hamming_threshold + 1 (LSH pigeonhole guarantee)
+  num_workers: 4           # processes for hashing; 1 => sequential
+  cache: splits/dup_clusters.csv   # relative to output_dir
+
+# Group-aware split — whole duplicate clusters stay within one split.
+split:
+  strategy: group_aware    # NEVER 'random'
+  ratios: {train: 0.70, val: 0.15, test: 0.15}
+  seed: 0
+  index_dir: splits        # relative to output_dir; writes train/val/test.csv
+  stratify_by_class: true  # per-class 70/15/15 while keeping clusters intact
+
+# Preprocessing / augmentation (identical across model families).
+image:
+  size: 224
+  normalize: imagenet
+augmentation:
+  random_resized_crop: {scale: [0.7, 1.0]}
+  color_jitter: {brightness: 0.2, contrast: 0.2, saturation: 0.2, hue: 0.0}
+  rand_augment: {num_ops: 2, magnitude: 7}
+  horizontal_flip: false   # OFF: some letters are orientation-sensitive
+  rotation_degrees: 10
+
+loader:
+  batch_size: 128
+  num_workers: 4
+  pin_memory: true
+
+report:
+  path: reports/phase1_data_report.txt   # relative to output_dir

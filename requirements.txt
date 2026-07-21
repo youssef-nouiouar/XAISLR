@@ -1,0 +1,33 @@
+# Core deep learning
+torch>=2.1
+torchvision>=0.16
+timm>=1.0.7            # ConvNeXt, DeiT, Swin, ViT backbones (matched pretraining)
+
+# XAI / explainability
+captum>=0.7.0          # Integrated Gradients, occlusion, KernelSHAP, infidelity, sensitivity
+grad-cam>=1.5.0        # pytorch-grad-cam: CAM family + ViT reshape_transform
+quantus>=0.5.3         # faithfulness/localization metric suite
+
+# Hand ROI masks for the Hand-Region Alignment contribution
+mediapipe>=0.10.9
+opencv-python>=4.9
+
+# Data, dedup, science
+numpy>=1.26
+pandas>=2.1
+scikit-learn>=1.4
+scipy>=1.11
+statsmodels>=0.14      # significance tests + multiple-comparison correction
+ImageHash>=4.3.1       # perceptual hashing for near-duplicate detection
+Pillow>=10.2
+
+# Config, logging, viz, tooling
+PyYAML>=6.0
+tqdm>=4.66
+matplotlib>=3.8
+seaborn>=0.13
+rich>=13.7
+ruff>=0.4              # lint + format
+
+# Optional experiment tracking (uncomment if used)
+# wandb>=0.17

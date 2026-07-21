@@ -1,0 +1,13 @@
+# ViT — primary (capacity ~matched to ConvNeXt-Tiny). Inherits recipe + data.
+inherit: [_recipe.yaml, data.yaml]
+
+model:
+  family: vit
+  name: deit_small_patch16_224   # timm id
+  pretrained: true
+  num_classes: 32
+  patch_size: 16
+  # For native (secondary) ViT explanations:
+  #   - Chefer relevance propagation / attention rollout
+  #   - CAM-on-ViT needs a reshape_transform (tokens -> 14x14 grid)
+  cam_reshape: {height: 14, width: 14, has_cls_token: true}

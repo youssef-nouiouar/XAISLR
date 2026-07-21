@@ -1,0 +1,11 @@
+# ViT — SECONDARY reference point only (~86M params, not capacity-matched).
+inherit: [_recipe.yaml, data.yaml]
+
+model:
+  family: vit
+  name: vit_base_patch16_224   # timm id
+  pretrained: true
+  num_classes: 32
+  patch_size: 16
+  cam_reshape: {height: 14, width: 14, has_cls_token: true}
+  role: secondary

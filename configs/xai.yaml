@@ -1,0 +1,64 @@
+# XAI generation + scoring configuration (Phases 3-4)
+
+# Fixed, shared evaluation subset so every model is explained on the SAME images.
+eval_subset:
+  n_per_class: 20          # 29 * 20 = 580 images
+  seed: 0
+  include_confusable_focus: [M, N, S, T, A, D, F, K, P, G, Q, H, U]
+
+# --- Explanation methods ---------------------------------------------------
+# PRIMARY: architecture-agnostic, applied identically to CNN and ViT.
+agnostic_methods:
+  rise:
+    n_masks: 4000
+    mask_prob: 0.5
+    cell_size: 8
+    seed: 0
+  occlusion:
+    window: 16
+    stride: 8
+  integrated_gradients:
+    steps: 64
+    baseline: black         # black | blur | mean
+  kernel_shap:
+    n_samples: 2000
+    segments: 49            # ~7x7 superpixels
+    seed: 0
+
+# SECONDARY: family-native ("best native explainer" view only — never headline).
+native_methods:
+  cnn:  [grad_cam, grad_cam_pp]
+  vit:  [chefer_relevance, attention_rollout]
+
+# --- Metrics ---------------------------------------------------------------
+faithfulness:            # via Quantus / Captum
+  - deletion_auc          # lower is better
+  - insertion_auc         # higher is better
+  - comprehensiveness     # higher is better
+  - sufficiency           # lower is better
+  - infidelity            # Yeh et al. — lower is better
+  - max_sensitivity       # lower is better
+
+localization:
+  - pointing_game
+  - energy_pointing_game
+  - iou_roi
+
+# --- Novel contribution: Hand-Region Alignment -----------------------------
+roi_alignment:
+  mask_source: mediapipe   # MediaPipe Hands landmarks
+  landmark_dilation_px: 20 # dilate convex hull of 21 landmarks
+  combine_skin_color: true # optional refinement
+  metric: energy_fraction  # fraction of positive attribution energy inside hand mask
+  mask_cache: data/processed/roi_masks
+
+# --- Statistics ------------------------------------------------------------
+stats:
+  test: wilcoxon           # wilcoxon | paired_t
+  multiple_comparison_correction: holm
+  alpha: 0.05
+  across: seeds
+
+output:
+  attributions_cache: experiments   # per-run subfolder
+  results_dir: results/tables

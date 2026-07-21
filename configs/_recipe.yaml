@@ -1,0 +1,27 @@
+# Shared training recipe — IDENTICAL across CNN and ViT (CLAUDE.md constraint #2).
+# Per-model configs inherit this and override ONLY the model block + (optionally) base LR.
+# Do not fork the schedule shape, augmentation, epochs, or seeds per family.
+
+recipe:
+  optimizer: adamw
+  base_lr: 5.0e-4          # may be tuned per family; schedule shape stays fixed
+  weight_decay: 0.05
+  lr_schedule: cosine
+  warmup_epochs: 3
+  epochs: 40
+  label_smoothing: 0.1
+  grad_clip_norm: 1.0
+  amp: true                # mixed precision
+  ema: false
+
+seeds: [0, 1, 2]           # >= 3 seeds for significance testing
+
+eval:
+  in_distribution: true
+  ood: false               # ArSL Mosl_alphabet has no separate real-world OOD set
+  save_confusion_matrix: true
+
+logging:
+  out_root: experiments
+  log_git_hash: true
+  log_seed: true

@@ -1,0 +1,9 @@
+# ViT (hierarchical) — primary. Inherits recipe + data.
+inherit: [_recipe.yaml, data.yaml]
+
+model:
+  family: vit
+  name: swin_tiny_patch4_window7_224   # timm id, ~28M params
+  pretrained: true
+  num_classes: 32
+  cam_reshape: {height: 7, width: 7, has_cls_token: false}

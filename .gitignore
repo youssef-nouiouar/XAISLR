@@ -1,0 +1,43 @@
+# Data (large / redistributable) — keep only split indices under data/splits/
+data/raw/
+data/processed/
+!data/splits/
+data/splits/*
+!data/splits/.gitkeep
+
+# Experiment outputs, checkpoints, logs
+experiments/*
+!experiments/.gitkeep
+*.pt
+*.pth
+*.ckpt
+wandb/
+runs/
+
+# Cached attributions / masks
+*.npy
+*.npz
+cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+
+# Tooling
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+.DS_Store
+## readme files
+CLAUDE.md
+PLAN.md
+# Results are regenerated; keep the folders but ignore heavy exports if desired
+# results/figures/*.png
